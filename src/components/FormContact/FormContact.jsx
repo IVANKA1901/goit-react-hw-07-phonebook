@@ -1,29 +1,18 @@
-// import PropTypes from 'prop-types';
-import { Notify } from 'notiflix';
-import { useState } from 'react';
-import { nanoid } from 'nanoid';
+import { useEffect, useState } from 'react';
 import css from './FormContact.module.css';
 import { useDispatch, useSelector } from 'react-redux';
-import { addContact } from 'store/contactsSlice';
-import { getContacts } from 'store/selectors';
+import { getContactsThunk } from 'store/thunk';
+import { selectContacts } from 'store/selectors';
+import { getContacts } from 'services/contactsApi';
 
 export function FormContacts() {
   const [name, setName] = useState('');
   const [number, setNumber] = useState('');
-  const [setId] = useState(nanoid());
 
   const dispatch = useDispatch();
-  const contacts = useSelector(getContacts);
-
-  const uniqueName = newName => {
-    const searchUnique = newName.toLowerCase();
-
-    if (contacts.find(({ name }) => name.toLowerCase() === searchUnique)) {
-      Notify.failure(`"${newName}" is already in contacts`);
-      return false;
-    }
-    return true;
-  };
+  useEffect(() => {
+    dispatch(getContactsThunk());
+  }, [dispatch]);
 
   const handleChange = e => {
     const { name, value } = e.target;
@@ -40,21 +29,28 @@ export function FormContacts() {
     }
   };
 
+  const contacts = useSelector(selectContacts);
+
   const handleSubmit = e => {
     e.preventDefault();
 
-    if (uniqueName(name)) {
-      dispatch(
-        addContact({
-          name: name,
-          number: number,
-          id: nanoid(),
-        })
-      );
+    const newContacts = {
+      name: name,
+      number: number,
+    };
+
+    if (
+      contacts.some(
+        contact =>
+          contact.name.toLowerCase().trim() === name.toLowerCase().trim()
+      )
+    ) {
+      return alert(`${name} is already in contacts`);
     }
+
+    dispatch(getContacts(newContacts));
     setName('');
     setNumber('');
-    setId(nanoid());
   };
 
   return (
@@ -93,7 +89,3 @@ export function FormContacts() {
     </form>
   );
 }
-
-// FormContacts.propTypes = {
-//   onSubmit: PropTypes.func.isRequired,
-// };
