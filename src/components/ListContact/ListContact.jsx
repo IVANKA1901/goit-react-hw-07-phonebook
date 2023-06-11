@@ -1,27 +1,33 @@
 import { useEffect } from 'react';
 import css from './ListContact.module.css';
 import { useDispatch, useSelector } from 'react-redux';
-import { addContactsThunk } from 'store/thunk';
-import { selectFilteredContacts } from 'store/selectors';
-import { deleteContacts } from 'services/contactsApi';
+import { addContactsThunk, deleteContactsThunk } from 'store/thunk';
 
 export function ListContact() {
-  const contacts = useSelector(selectFilteredContacts);
-
+  const { items } = useSelector(state => state.contacts.contacts);
   const dispatch = useDispatch();
+  const filter = useSelector(state => state.contacts.filter);
 
   useEffect(() => {
     dispatch(addContactsThunk());
   }, [dispatch]);
 
   const onDeleteContact = id => {
-    dispatch(deleteContacts(id));
+    dispatch(deleteContactsThunk(id));
   };
+
+  const filteredContacts = items?.filter(contact =>
+    contact?.name?.toLowerCase().includes(filter.toLowerCase())
+  );
+
+  if (!filteredContacts?.length) {
+    return <p>No contacts found:(</p>;
+  }
 
   return (
     <ul className={css.list}>
-      {contacts.map(({ id, name, number }) => (
-        <li key={id} className={css.item}>
+      {filteredContacts.map(({ id, createdAt, name, number }) => (
+        <li key={createdAt} className={css.item}>
           <p>
             {name}: {number}
           </p>

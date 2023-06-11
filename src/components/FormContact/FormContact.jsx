@@ -1,9 +1,7 @@
 import { useEffect, useState } from 'react';
 import css from './FormContact.module.css';
 import { useDispatch, useSelector } from 'react-redux';
-import { getContactsThunk } from 'store/thunk';
-import { selectContacts } from 'store/selectors';
-import { getContacts } from 'services/contactsApi';
+import { addContactsThunk, getContactsThunk } from 'store/thunk';
 
 export function FormContacts() {
   const [name, setName] = useState('');
@@ -29,7 +27,7 @@ export function FormContacts() {
     }
   };
 
-  const contacts = useSelector(selectContacts);
+  const { items } = useSelector(state => state.contacts.contacts);
 
   const handleSubmit = e => {
     e.preventDefault();
@@ -40,7 +38,7 @@ export function FormContacts() {
     };
 
     if (
-      contacts.some(
+      items.some(
         contact =>
           contact.name.toLowerCase().trim() === name.toLowerCase().trim()
       )
@@ -48,7 +46,7 @@ export function FormContacts() {
       return alert(`${name} is already in contacts`);
     }
 
-    dispatch(getContacts(newContacts));
+    dispatch(addContactsThunk(newContacts));
     setName('');
     setNumber('');
   };

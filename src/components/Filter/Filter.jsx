@@ -1,11 +1,10 @@
 import css from './Filter.module.css';
 import { useDispatch, useSelector } from 'react-redux';
 
-import { selectFilter } from 'store/selectors';
 import { setFilter } from 'store/createSlice';
 
 export function Filter() {
-  const filter = useSelector(selectFilter);
+  const filter = useSelector(state => state.contacts.filter);
   const dispatch = useDispatch();
 
   const onInputChange = ({ target: { value } }) => {

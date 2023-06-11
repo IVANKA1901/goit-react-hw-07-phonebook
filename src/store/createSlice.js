@@ -29,7 +29,7 @@ const handleFulfilledGet = (state, { payload }) => {
 
 const handleFulfilledAdd = (state, { payload }) => {
   state.contacts.isLoading = false;
-  state.contacts.items.push(payload);
+  state.contacts.items = [payload, ...state.contacts.items];
 };
 
 const handleFulfilledDelete = (state, { payload }) => {
@@ -44,7 +44,10 @@ const contactsSlice = createSlice({
   initialState,
   reducers: {
     setFilter: (state, { payload }) => {
-      state.filter = payload;
+      return {
+        ...state,
+        filter: payload,
+      };
     },
   },
   extraReducers: builder => {
