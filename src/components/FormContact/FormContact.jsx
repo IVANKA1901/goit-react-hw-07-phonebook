@@ -43,10 +43,11 @@ export function FormContacts() {
           contact.name.toLowerCase().trim() === name.toLowerCase().trim()
       )
     ) {
-      return alert(`${name} is already in contacts`);
+      return alert(`${name} is already exist in contacts`);
     }
 
     dispatch(addContactsThunk(newContacts));
+
     setName('');
     setNumber('');
   };
@@ -59,7 +60,7 @@ export function FormContacts() {
           type="text"
           name="name"
           value={name}
-          pattern="^[a-zA-Zа-яА-Я]+(([' -][a-zA-Zа-яА-Я ])?[a-zA-Zа-яА-Я]*)*$"
+          pattern="^[a-zA-Zа-яА-Я]+([\'\-\s][a-zA-Zа-яА-Я ])?[a-zA-Zа-яА-Я]*$"
           title="Name may contain only letters, apostrophe, dash and spaces. For example Adrian, Jacob Mercer, Charles de Batz de Castelmore d'Artagnan"
           required
           onChange={handleChange}
